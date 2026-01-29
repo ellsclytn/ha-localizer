@@ -1,67 +1,30 @@
-use std::env;
+mod home_assistant;
 
 use axum::{Json, Router, http::StatusCode, routing::post};
-use serde::{Deserialize, Serialize};
+use home_assistant::{Client, IchnaeaResponse};
+use std::{env, thread};
 
 #[tokio::main]
 async fn main() {
+    let port = match env::var("PORT") {
+        Ok(port) => port,
+        _ => "3000".to_string(),
+    };
+
+    thread::spawn(|| {
+        println!("Hello, thread!");
+    });
+
     let app = Router::new().route("/", post(root));
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+    let listener = tokio::net::TcpListener::bind(format!("127.0.0.1:{}", port))
         .await
         .unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 
 async fn root() -> (StatusCode, Json<IchnaeaResponse>) {
-    let url = format!(
-        "https://{}/api/states/device_tracker.{}",
-        env::var("HA_DOMAIN").unwrap(),
-        env::var("DEVICE_ID").unwrap()
-    );
-    let auth_token = format!("Bearer {}", env::var("HA_ACCESS_TOKEN").unwrap());
+    let ha = Client::new();
+    let location = ha.get_location().await;
 
-    let location: HomeAssistantResponse = reqwest::Client::new()
-        .get(url)
-        .header("Accept", "application/json")
-        .header("Authorization", auth_token)
-        .send()
-        .await
-        .unwrap()
-        .json()
-        .await
-        .unwrap();
-
-    let response = IchnaeaResponse {
-        location: Location {
-            lat: location.attributes.latitude,
-            lng: location.attributes.longitude,
-        },
-        accuracy: location.attributes.gps_accuracy,
-    };
-
-    (StatusCode::OK, Json(response))
-}
-
-#[derive(Debug, Deserialize)]
-struct HomeAssistantResponse {
-    attributes: DeviceLocation,
-}
-
-#[derive(Debug, Deserialize)]
-struct DeviceLocation {
-    latitude: f32,
-    longitude: f32,
-    gps_accuracy: f32,
-}
-
-#[derive(Debug, Serialize)]
-struct IchnaeaResponse {
-    location: Location,
-    accuracy: f32,
-}
-
-#[derive(Debug, Serialize)]
-struct Location {
-    lat: f32,
-    lng: f32,
+    (StatusCode::OK, Json(location))
 }
