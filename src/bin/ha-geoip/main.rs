@@ -1,19 +1,23 @@
-mod http;
+#[path = "../../config.rs"]
+mod config;
+#[path = "../../home_assistant.rs"]
+mod home_assistant;
 mod ichnaea;
 mod location;
+mod server;
 
-use std::{net::TcpListener, process};
-
-const ADDRESS: &str = "127.0.0.1:51144";
+use crate::config::Config;
+use std::process;
 
 fn main() {
-    let listener = match TcpListener::bind(ADDRESS) {
-        Ok(t) => t,
+    let config = match Config::new() {
+        Ok(c) => c,
         Err(e) => {
-            eprintln!("Failed to bind to {}: {}", ADDRESS, e);
+            eprintln!("Failed to load config: {}", e);
             process::exit(1);
         }
     };
 
-    http::process_streams(listener);
+    let server = server::Server::new(config);
+    server.listen();
 }

@@ -1,7 +1,6 @@
-#[path = "../../home_assistant.rs"]
-mod home_assistant;
+use std::rc::Rc;
 
-use crate::ichnaea;
+use crate::{config::Config, home_assistant, ichnaea};
 use anyhow::{Context, Result};
 use serde::Deserialize;
 
@@ -22,8 +21,8 @@ pub struct LocationProvider {
 }
 
 impl LocationProvider {
-    pub fn new() -> LocationProvider {
-        let client = home_assistant::Client::new();
+    pub fn new(config: Rc<Config>) -> LocationProvider {
+        let client = home_assistant::Client::new(config);
 
         LocationProvider { client }
     }

@@ -1,21 +1,21 @@
+use crate::config::Config;
 use reqwest::{
     blocking::RequestBuilder,
     header::{HeaderMap, HeaderValue},
 };
-
-use std::env;
+use std::rc::Rc;
 
 pub struct Client {
     client: reqwest::blocking::Client,
-    domain: String,
+    config: Rc<Config>,
     pub device_id: String,
 }
 
 impl Client {
-    pub fn new() -> Self {
-        let domain = env::var("HA_DOMAIN").unwrap();
-        let device_id = env::var("DEVICE_ID").unwrap();
-        let auth_token = format!("Bearer {}", env::var("HA_ACCESS_TOKEN").unwrap());
+    pub fn new(config: Rc<Config>) -> Self {
+        let config = config.clone();
+        let device_id = config.device_id.clone();
+        let auth_token = format!("Bearer {}", config.api_key);
 
         let mut headers = HeaderMap::new();
         headers.insert("Accept", HeaderValue::from_static("application/json"));
@@ -28,12 +28,12 @@ impl Client {
 
         Client {
             client,
-            domain,
+            config,
             device_id,
         }
     }
 
     pub fn get(&self, path: &str) -> RequestBuilder {
-        self.client.get(format!("https://{}{}", self.domain, path))
+        self.client.get(format!("{}{}", self.config.base_url, path))
     }
 }

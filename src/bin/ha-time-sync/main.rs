@@ -1,9 +1,12 @@
+#[path = "../../config.rs"]
+mod config;
 #[path = "../../home_assistant.rs"]
 mod home_assistant;
 
+use crate::config::Config;
 use home_assistant::Client;
 use serde::{Deserialize, Serialize};
-use std::{fs, os::unix::fs::symlink};
+use std::{fs, os::unix::fs::symlink, process, rc::Rc};
 
 fn main() {
     let provider = TimezoneProvider::new();
@@ -27,7 +30,14 @@ struct TimezoneProvider {
 
 impl TimezoneProvider {
     pub fn new() -> Self {
-        let client = Client::new();
+        let config = match Config::new() {
+            Ok(c) => c,
+            Err(e) => {
+                eprintln!("Failed to load config: {}", e);
+                process::exit(1);
+            }
+        };
+        let client = Client::new(Rc::new(config));
 
         TimezoneProvider { client }
     }
