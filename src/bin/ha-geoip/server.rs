@@ -87,30 +87,20 @@ impl Server {
         status_code: &str,
         body: Option<&str>,
     ) -> Result<()> {
-        let status_line = format!("HTTP/1.1 {status_code}");
-
-        let mut response_lines: Vec<String> = Vec::new();
-        let separator = "\r\n";
-        response_lines.push(status_line);
-        response_lines.push("Content-Type: application/json".to_string());
+        write!(stream, "HTTP/1.1 {}\r\n", status_code)?;
+        write!(stream, "Content-Type: application/json\r\n")?;
 
         match body {
             Some(body) => {
-                let length = body.len() + 2;
-                response_lines.push(format!("Content-Length: {length}"));
-                response_lines.push(separator.to_string());
-                response_lines.push(body.to_string());
+                let length = body.len();
+                write!(stream, "Content-Length: {length}\r\n\r\n")?;
+                write!(stream, "{body}")?;
             }
             _ => {
-                response_lines.push(format!("Content-Length: 4"));
-                response_lines.push(separator.to_string());
-                response_lines.push("{}".to_string());
+                write!(stream, "Content-Length: 2\r\n\r\n{{}}")?;
             }
-        }
+        };
 
-        let response = response_lines.join(separator);
-        stream
-            .write_all(response.as_bytes())
-            .context("Failed to write stream to client")
+        Ok(())
     }
 }
