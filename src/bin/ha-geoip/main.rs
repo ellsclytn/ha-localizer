@@ -1,12 +1,8 @@
-#[path = "../../config.rs"]
-mod config;
-#[path = "../../home_assistant.rs"]
-mod home_assistant;
 mod ichnaea;
 mod location;
 mod server;
 
-use crate::config::Config;
+use ha_localizer::config::Config;
 use std::process;
 
 fn main() {

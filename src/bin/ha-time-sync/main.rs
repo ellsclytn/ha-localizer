@@ -1,10 +1,4 @@
-#[path = "../../config.rs"]
-mod config;
-#[path = "../../home_assistant.rs"]
-mod home_assistant;
-
-use crate::config::Config;
-use home_assistant::Client;
+use ha_localizer::{config::Config, home_assistant::Client};
 use serde::{Deserialize, Serialize};
 use std::{fs, os::unix::fs::symlink, process};
 

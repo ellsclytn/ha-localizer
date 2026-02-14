@@ -1,5 +1,6 @@
-use crate::{config::Config, home_assistant, ichnaea};
+use crate::ichnaea;
 use anyhow::{Context, Result};
+use ha_localizer::{config::Config, home_assistant};
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]

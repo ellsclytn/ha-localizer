@@ -1,8 +1,6 @@
-use crate::{
-    config::Config,
-    location::{self, LocationProvider},
-};
+use crate::location::{self, LocationProvider};
 use anyhow::{Context, Result};
+use ha_localizer::config::Config;
 use std::{
     io::{BufReader, prelude::*},
     net::{TcpListener, TcpStream},
