@@ -46,8 +46,6 @@ impl TimezoneProvider {
         let tz = self.get_timezone().attributes.time_zone_id;
 
         self.set_timezone(&tz);
-
-        ()
     }
 
     fn get_timezone(&self) -> TimezoneResponse {
@@ -70,7 +68,5 @@ impl TimezoneProvider {
         symlink(original, link).unwrap();
 
         println!("Timezone set to {tz}");
-
-        ()
     }
 }
