@@ -35,6 +35,8 @@ impl Server {
             }
         };
 
+        println!("Listening on {listener_address}");
+
         self.process_streams(listener);
     }
 
