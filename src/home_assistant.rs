@@ -6,13 +6,12 @@ use reqwest::{
 
 pub struct Client {
     client: reqwest::blocking::Client,
-    config: Config,
+    base_url: String,
     pub device_id: String,
 }
 
 impl Client {
     pub fn new(config: Config) -> Self {
-        let device_id = config.device_id.clone();
         let auth_token = format!("Bearer {}", config.api_key);
 
         let mut headers = HeaderMap::new();
@@ -26,12 +25,12 @@ impl Client {
 
         Client {
             client,
-            config,
-            device_id,
+            device_id: config.device_id,
+            base_url: config.base_url,
         }
     }
 
     pub fn get(&self, path: &str) -> RequestBuilder {
-        self.client.get(format!("{}{}", self.config.base_url, path))
+        self.client.get(format!("{}{}", self.base_url, path))
     }
 }
