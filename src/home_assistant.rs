@@ -3,17 +3,15 @@ use reqwest::{
     blocking::RequestBuilder,
     header::{HeaderMap, HeaderValue},
 };
-use std::rc::Rc;
 
 pub struct Client {
     client: reqwest::blocking::Client,
-    config: Rc<Config>,
+    config: Config,
     pub device_id: String,
 }
 
 impl Client {
-    pub fn new(config: Rc<Config>) -> Self {
-        let config = config.clone();
+    pub fn new(config: Config) -> Self {
         let device_id = config.device_id.clone();
         let auth_token = format!("Bearer {}", config.api_key);
 

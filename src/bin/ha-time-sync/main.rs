@@ -6,7 +6,7 @@ mod home_assistant;
 use crate::config::Config;
 use home_assistant::Client;
 use serde::{Deserialize, Serialize};
-use std::{fs, os::unix::fs::symlink, process, rc::Rc};
+use std::{fs, os::unix::fs::symlink, process};
 
 fn main() {
     let provider = TimezoneProvider::new();
@@ -37,7 +37,7 @@ impl TimezoneProvider {
                 process::exit(1);
             }
         };
-        let client = Client::new(Rc::new(config));
+        let client = Client::new(config);
 
         TimezoneProvider { client }
     }

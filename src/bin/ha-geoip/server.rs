@@ -7,27 +7,26 @@ use std::{
     io::{BufReader, prelude::*},
     net::{TcpListener, TcpStream},
     process,
-    rc::Rc,
 };
 
 pub struct Server {
-    config: Rc<Config>,
+    port: u16,
     location_provider: LocationProvider,
 }
 
 impl Server {
     pub fn new(config: Config) -> Server {
-        let config = Rc::new(config);
-        let location_provider = location::LocationProvider::new(config.clone());
+        let port = config.port;
+        let location_provider = location::LocationProvider::new(config);
 
         Server {
-            config,
+            port,
             location_provider,
         }
     }
 
     pub fn listen(self: &Server) {
-        let listener_address = format!("127.0.0.1:{}", self.config.port);
+        let listener_address = format!("127.0.0.1:{}", self.port);
         let listener = match TcpListener::bind(&listener_address) {
             Ok(t) => t,
             Err(e) => {

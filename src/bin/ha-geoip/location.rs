@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use crate::{config::Config, home_assistant, ichnaea};
 use anyhow::{Context, Result};
 use serde::Deserialize;
@@ -21,7 +19,7 @@ pub struct LocationProvider {
 }
 
 impl LocationProvider {
-    pub fn new(config: Rc<Config>) -> LocationProvider {
+    pub fn new(config: Config) -> LocationProvider {
         let client = home_assistant::Client::new(config);
 
         LocationProvider { client }
