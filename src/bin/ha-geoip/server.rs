@@ -2,12 +2,16 @@ use crate::{
     config::Config,
     location::{self, LocationProvider},
 };
-use anyhow::{Context, Result, bail};
+use anyhow::{Context, Result};
 use std::{
     io::{BufReader, prelude::*},
     net::{TcpListener, TcpStream},
     process,
 };
+
+// It's unexpected for the first line of a request to be above this size, so we might as well keep
+// the initial allocation small.
+const MAX_REQUEST_LINE_BYTES: usize = 128;
 
 pub struct Server {
     port: u16,
@@ -55,14 +59,14 @@ impl Server {
     }
 
     fn handle_connection(self: &Server, stream: TcpStream) -> Result<()> {
-        let buf_reader = BufReader::new(&stream);
+        let mut buf_reader = BufReader::with_capacity(MAX_REQUEST_LINE_BYTES, &stream);
+        let mut request_line = String::with_capacity(MAX_REQUEST_LINE_BYTES);
 
-        let request_line = match buf_reader.lines().next() {
-            Some(l) => l.context("Failed to read request line")?,
-            None => {
-                bail!("Request has no lines")
-            }
-        };
+        buf_reader
+            .read_line(&mut request_line)
+            .context("Failed to read request line")?;
+
+        let request_line = request_line.trim();
 
         if request_line == "POST / HTTP/1.1" {
             println!("Processing GeoIP request");
