@@ -1,0 +1,11 @@
+pre_bump_hooks = [
+    "echo {{version}}",
+    "cargo set-version {{version}}",
+    "git add :/Cargo.lock :/Cargo.toml",
+]
+
+
+post_bump_hooks = [
+    "git push",
+    "git push origin {{version}}",
+]
