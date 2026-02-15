@@ -55,19 +55,20 @@ jobs:
     needs: [tag-version]
     strategy:
       matrix:
-        include:
-          - target: aarch64-unknown-linux-gnu
-            os: ubuntu-latest
-          - target: x86_64-unknown-linux-gnu
-            os: ubuntu-latest
-    runs-on: ${{ matrix.os }}
+        target:
+          - aarch64-unknown-linux-gnu
+          - x86_64-unknown-linux-gnu
+        bin:
+          - ha-geoip
+          - ha-timezone-sync
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
-          bin: ha-geoip,ha-timezone-sync
+          bin: ${{ matrix.bin }}
           target: ${{ matrix.target }}
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: refs/tags/${{ needs.tag-version.outputs.version }}
