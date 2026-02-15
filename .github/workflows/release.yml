@@ -51,8 +51,25 @@ jobs:
       - name: Print version
         run: "echo '${{ steps.release.outputs.version }}'"
 
+  create-release:
+    needs: tag-version
+    if: needs.tag-version.outputs.new-tag-created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.tag-version.outputs.version }}
+      - name: Create release
+        uses: taiki-e/create-gh-release-action@v1
+        with:
+          changelog: CHANGELOG.md
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: refs/tags/${{ needs.tag-version.outputs.version }}
+
   upload-assets:
-    needs: [tag-version]
+    needs: [tag-version, create-release]
+    if: needs.tag-version.outputs.new-tag-created == 'true'
     strategy:
       matrix:
         target:
