@@ -1,0 +1,8 @@
+[Unit]
+Description=ha-geoip
+
+[Service]
+ExecStart=/usr/bin/ha-geoip
+
+[Install]
+WantedBy=default.target

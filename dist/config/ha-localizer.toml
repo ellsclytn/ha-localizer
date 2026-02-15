@@ -1,0 +1,4 @@
+api_key="abc123"
+device_id="foobar"
+base_url="https://homeassistant.example.com" # no trailing slash
+port=58573 # can be any free port. Only used by ha-geoip

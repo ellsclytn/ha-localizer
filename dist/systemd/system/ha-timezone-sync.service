@@ -1,0 +1,9 @@
+[Unit]
+Description=ha-timezone-sync
+
+[Service]
+ExecStart=/usr/bin/ha-timezone-sync
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
