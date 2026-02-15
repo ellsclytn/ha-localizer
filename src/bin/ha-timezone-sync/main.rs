@@ -2,6 +2,8 @@ use ha_localizer::{config::Config, home_assistant::Client};
 use serde::{Deserialize, Serialize};
 use std::{fs, os::unix::fs::symlink, process};
 
+const ETC_LOCALTIME: &str = "/etc/localtime";
+
 fn main() {
     let provider = TimezoneProvider::new();
 
@@ -55,11 +57,14 @@ impl TimezoneProvider {
 
     fn set_timezone(&self, tz: &str) {
         let original = format!("/usr/share/zoneinfo/{tz}");
-        let link = "/etc/localtime";
 
-        fs::remove_file(link).unwrap();
+        if let Err(e) = fs::exists(&original) {
+            eprintln!("Failed to find {tz}: {e}");
+            process::exit(1);
+        }
 
-        symlink(original, link).unwrap();
+        fs::remove_file(ETC_LOCALTIME).unwrap();
+        symlink(original, ETC_LOCALTIME).unwrap();
 
         println!("Timezone set to {tz}");
     }
