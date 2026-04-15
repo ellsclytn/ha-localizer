@@ -89,3 +89,4 @@ jobs:
           target: ${{ matrix.target }}
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: refs/tags/${{ needs.tag-version.outputs.version }}
+          checksum: sha256
