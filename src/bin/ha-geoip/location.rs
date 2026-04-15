@@ -20,10 +20,10 @@ pub struct LocationProvider {
 }
 
 impl LocationProvider {
-    pub fn new(config: Config) -> LocationProvider {
-        let client = home_assistant::Client::new(config);
+    pub fn new(config: Config) -> Result<LocationProvider> {
+        let client = home_assistant::Client::new(config)?;
 
-        LocationProvider { client }
+        Ok(LocationProvider { client })
     }
 
     pub fn get_location(&self) -> Result<ichnaea::Response> {

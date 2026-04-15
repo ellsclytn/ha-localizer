@@ -14,6 +14,11 @@ fn main() {
         }
     };
 
-    let server = server::Server::new(config);
-    server.listen();
+    match server::Server::new(config) {
+        Ok(s) => s.listen(),
+        Err(e) => {
+            eprintln!("Error initalizing server: {}", e);
+            process::exit(1);
+        }
+    };
 }

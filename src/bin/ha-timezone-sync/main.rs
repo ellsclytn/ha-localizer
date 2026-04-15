@@ -7,7 +7,13 @@ const ETC_LOCALTIME: &str = "/etc/localtime";
 const ZONEINFO_PATH: &str = "/usr/share/zoneinfo";
 
 fn main() {
-    let provider = TimezoneProvider::new();
+    let provider = match TimezoneProvider::new() {
+        Ok(p) => p,
+        Err(e) => {
+            eprintln!("Failed to initalize TimezoneProvider: {}", e);
+            process::exit(1);
+        }
+    };
 
     match provider.sync_timezone() {
         Ok(tz) => println!("Timezone set to {tz}"),
@@ -33,7 +39,7 @@ struct TimezoneProvider {
 }
 
 impl TimezoneProvider {
-    pub fn new() -> Self {
+    pub fn new() -> Result<Self> {
         let config = match Config::new() {
             Ok(c) => c,
             Err(e) => {
@@ -41,9 +47,9 @@ impl TimezoneProvider {
                 process::exit(1);
             }
         };
-        let client = Client::new(config);
+        let client = Client::new(config)?;
 
-        TimezoneProvider { client }
+        Ok(TimezoneProvider { client })
     }
 
     pub fn sync_timezone(&self) -> Result<String> {

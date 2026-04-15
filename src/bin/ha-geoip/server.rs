@@ -17,14 +17,14 @@ pub struct Server {
 }
 
 impl Server {
-    pub fn new(config: Config) -> Server {
+    pub fn new(config: Config) -> Result<Server> {
         let port = config.port;
-        let location_provider = location::LocationProvider::new(config);
+        let location_provider = location::LocationProvider::new(config)?;
 
-        Server {
+        Ok(Server {
             port,
             location_provider,
-        }
+        })
     }
 
     pub fn listen(self: &Server) {

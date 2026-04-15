@@ -1,4 +1,5 @@
 use crate::config::Config;
+use anyhow::{Context, Result};
 use reqwest::{
     blocking::RequestBuilder,
     header::{HeaderMap, HeaderValue},
@@ -11,23 +12,27 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn new(config: Config) -> Self {
+    pub fn new(config: Config) -> Result<Self> {
         let auth_token = format!("Bearer {}", config.api_key);
 
         let mut headers = HeaderMap::new();
         headers.insert("Accept", HeaderValue::from_static("application/json"));
-        headers.insert("Authorization", HeaderValue::from_str(&auth_token).unwrap());
+        headers.insert(
+            "Authorization",
+            HeaderValue::from_str(&auth_token)
+                .context("Authorization string contains invalid values")?,
+        );
 
         let client = reqwest::blocking::Client::builder()
             .default_headers(headers)
             .build()
             .unwrap();
 
-        Client {
+        Ok(Client {
             client,
             device_id: config.device_id,
             base_url: config.base_url,
-        }
+        })
     }
 
     pub fn get(&self, path: &str) -> RequestBuilder {
