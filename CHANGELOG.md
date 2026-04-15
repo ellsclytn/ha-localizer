@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.2.1 - 2026-04-15
+#### Bug Fixes
+- improve error message for invalid auth - (964edd8) - Ellis Clayton
+#### Continuous Integration
+- include checksums in releases - (6bf040f) - Ellis Clayton
+
+- - -
+
 ## 0.2.0 - 2026-02-15
 #### Continuous Integration
 - only run releases for new tags - (67cda85) - Ellis Clayton
