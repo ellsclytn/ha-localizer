@@ -26,7 +26,7 @@ impl Client {
         let client = reqwest::blocking::Client::builder()
             .default_headers(headers)
             .build()
-            .unwrap();
+            .context("Failed to build HTTP client")?;
 
         Ok(Client {
             client,
