@@ -70,6 +70,10 @@ impl TimezoneProvider {
     }
 
     fn set_timezone(&self, tz: &str) -> Result<()> {
+        if tz.contains("..") || tz.starts_with('/') {
+            bail!("Invalid timezone: {tz}");
+        }
+
         let original = format!("{ZONEINFO_PATH}/{tz}");
         match fs::exists(&original) {
             Ok(false) => bail!("{tz} does not exist in zoneinfo."),
