@@ -83,8 +83,9 @@ impl TimezoneProvider {
             _ => {}
         }
 
-        fs::remove_file(ETC_LOCALTIME)?;
-        symlink(original, ETC_LOCALTIME)?;
+        let tmp = format!("{ETC_LOCALTIME}.tmp");
+        symlink(&original, &tmp)?;
+        fs::rename(&tmp, ETC_LOCALTIME)?;
 
         Ok(())
     }
