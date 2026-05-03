@@ -40,13 +40,7 @@ struct TimezoneProvider {
 
 impl TimezoneProvider {
     pub fn new() -> Result<Self> {
-        let config = match Config::new() {
-            Ok(c) => c,
-            Err(e) => {
-                eprintln!("Failed to load config: {}", e);
-                process::exit(1);
-            }
-        };
+        let config = Config::new()?;
         let client = Client::new(config)?;
 
         Ok(TimezoneProvider { client })
