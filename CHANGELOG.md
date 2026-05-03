@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.2.2 - 2026-05-03
+#### Bug Fixes
+- remove redundant early exit - (5681e5c) - Ellis Clayton
+- update /etc/localtime atomically - (4e72439) - Ellis Clayton
+- provide better error on HTTP client build - (d61527c) - Ellis Clayton
+- reject timezones containing path traversal - (cd291fe) - Ellis Clayton
+#### Performance Improvements
+- remove unused chrono dependency - (8d4c51d) - Ellis Clayton
+
+- - -
+
 ## 0.2.1 - 2026-04-15
 #### Bug Fixes
 - improve error message for invalid auth - (964edd8) - Ellis Clayton
