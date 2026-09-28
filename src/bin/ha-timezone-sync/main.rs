@@ -58,7 +58,7 @@ impl TimezoneProvider {
             "/api/states/sensor.{}_current_time_zone",
             self.client.device_id
         );
-        let response: TimezoneResponse = self.client.get(&path).send()?.json()?;
+        let response: TimezoneResponse = self.client.get(&path)?.body_mut().read_json()?;
 
         Ok(response)
     }

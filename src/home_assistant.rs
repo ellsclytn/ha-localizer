@@ -1,41 +1,26 @@
 use crate::config::Config;
-use anyhow::{Context, Result};
-use reqwest::{
-    blocking::RequestBuilder,
-    header::{HeaderMap, HeaderValue},
-};
+use anyhow::Result;
+use ureq::{Body, Error, http::{Response}};
 
 pub struct Client {
-    client: reqwest::blocking::Client,
+    api_key: String,
     base_url: String,
     pub device_id: String,
 }
 
 impl Client {
     pub fn new(config: Config) -> Result<Self> {
-        let auth_token = format!("Bearer {}", config.api_key);
-
-        let mut headers = HeaderMap::new();
-        headers.insert("Accept", HeaderValue::from_static("application/json"));
-        headers.insert(
-            "Authorization",
-            HeaderValue::from_str(&auth_token)
-                .context("Authorization string contains invalid values")?,
-        );
-
-        let client = reqwest::blocking::Client::builder()
-            .default_headers(headers)
-            .build()
-            .context("Failed to build HTTP client")?;
-
         Ok(Client {
-            client,
+            api_key: config.api_key,
             device_id: config.device_id,
             base_url: config.base_url,
         })
     }
 
-    pub fn get(&self, path: &str) -> RequestBuilder {
-        self.client.get(format!("{}{}", self.base_url, path))
+    pub fn get(&self, path: &str) -> Result<Response<Body>, Error> {
+        ureq::get(format!("{}{}", self.base_url, path))
+            .header("Accept", "application/json")
+            .header("Authorization", format!("Bearer {}", self.api_key))
+            .call()
     }
 }

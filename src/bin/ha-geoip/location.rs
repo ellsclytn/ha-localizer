@@ -31,9 +31,9 @@ impl LocationProvider {
         let response: LocationResponse = self
             .client
             .get(&path)
-            .send()
             .context("Location request failed")?
-            .json()
+            .body_mut()
+            .read_json()
             .context("Failed to parse location response from Home Assistant")?;
 
         Ok(ichnaea::Response {
